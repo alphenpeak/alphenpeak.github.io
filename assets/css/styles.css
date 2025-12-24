@@ -12,7 +12,7 @@ body {
 }   
 
 header {
-  padding: 30rem;  
+  padding: 300rem;  
   background-color: #f4f6f8;
   border-bottom: 2px solid var(--accent);     
 }
