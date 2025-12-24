@@ -14,7 +14,7 @@ body {
 header {
   padding: 1.2rem; 
   background-color: #f4f6f8;
-  border-bottom: 2px solid var(--accent);   
+  border-bottom: 2px solid var(--accent);     
 }
 
 main {
