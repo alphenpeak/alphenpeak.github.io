@@ -16,7 +16,7 @@ header {
   background-color: #f4f6f8;
   border-bottom: 2px solid var(--accent);     
 }
-
+ 
 main {
   padding: 2rem;
   max-width: 800px;
