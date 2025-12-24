@@ -67,3 +67,55 @@ nav a:hover {
   text-decoration: underline;
   color: var(--accent);
 }
+
+/* ---------- Form Styling ---------- */
+
+form {
+  max-width: 500px;
+  margin-top: 1.5rem;
+}
+
+label {
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+input[type="email"],
+textarea {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  margin-top: 0.25rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+input[type="email"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  margin-top: 0.75rem;
+  padding: 0.6rem 1.25rem;
+  background-color: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #162c46; /* darker navy */
+}
+
