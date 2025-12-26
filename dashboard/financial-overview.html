@@ -63,17 +63,24 @@ function renderChart(labels, revenue, expenses) {
       labels: labels,
       datasets: [
         {
-          label: "Revenue",
-          data: revenue,
-          borderColor: "#1f3a5f",
-          tension: 0.2
-        },
+  label: "Revenue",
+  data: revenue,
+  borderColor: "#1f3a5f",
+  backgroundColor: "transparent",
+  pointBackgroundColor: "#1f3a5f",
+  fill: false,
+  tension: 0.2
+},
         {
-          label: "Expenses",
-          data: expenses,
-          borderColor: "#999",
-          tension: 0.2
-        }
+  label: "Expenses",
+  data: expenses,
+  borderColor: "#999",
+  backgroundColor: "transparent",
+  pointBackgroundColor: "#999",
+  fill: false,
+  tension: 0.2
+}
+
       ]
     },
     options: {
