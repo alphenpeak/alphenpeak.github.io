@@ -16,18 +16,42 @@ async function loadFinancialData() {
   const text = await response.text();
 
   const rows = text.trim().split("\n").slice(1);
-  const labels = [];
-  const revenue = [];
-  const expenses = [];
+const labels = [];
+const revenue = [];
+const expenses = [];
+
+let totalRevenue = 0;
+let totalExpenses = 0;
+
 
   rows.forEach(row => {
     const [month, rev, exp] = row.split(",");
     labels.push(month);
     revenue.push(Number(rev));
     expenses.push(Number(exp));
-  });
+    totalRevenue += Number(rev);
+    totalExpenses += Number(exp);
 
+  });
+  updateKPIs(totalRevenue, totalExpenses);
   renderChart(labels, revenue, expenses);
+  function updateKPIs(totalRevenue, totalExpenses) {
+  const profit = totalRevenue - totalExpenses;
+  const margin = (profit / totalRevenue) * 100;
+
+  document.getElementById("kpi-revenue").textContent =
+    totalRevenue.toLocaleString("en-ZA", { style: "currency", currency: "ZAR" });
+
+  document.getElementById("kpi-expenses").textContent =
+    totalExpenses.toLocaleString("en-ZA", { style: "currency", currency: "ZAR" });
+
+  document.getElementById("kpi-profit").textContent =
+    profit.toLocaleString("en-ZA", { style: "currency", currency: "ZAR" });
+
+  document.getElementById("kpi-margin").textContent =
+    margin.toFixed(1) + "%";
+}
+
 }
 
 function renderChart(labels, revenue, expenses) {
