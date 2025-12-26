@@ -83,14 +83,18 @@ function renderChart(labels, revenue, expenses) {
 
       ]
     },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: "bottom"
-        }
+   options: {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: "bottom",
+      labels: {
+        usePointStyle: true
       }
     }
+  }
+}
+
   });
 }
 
