@@ -119,3 +119,34 @@ button:hover {
   background-color: #162c46; /* darker navy */
 }
 
+
+/* ---------- KPI Dashboard ---------- */
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.kpi {
+  background: #f4f6f8;
+  padding: 1rem 1.25rem;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.kpi-label {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.kpi-value {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
