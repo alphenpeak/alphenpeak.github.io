@@ -10,6 +10,62 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+  <script>
+async function loadFinancialData() {
+  const response = await fetch("data/financials.csv");
+  const text = await response.text();
+
+  const rows = text.trim().split("\n").slice(1);
+  const labels = [];
+  const revenue = [];
+  const expenses = [];
+
+  rows.forEach(row => {
+    const [month, rev, exp] = row.split(",");
+    labels.push(month);
+    revenue.push(Number(rev));
+    expenses.push(Number(exp));
+  });
+
+  renderChart(labels, revenue, expenses);
+}
+
+function renderChart(labels, revenue, expenses) {
+  const ctx = document.getElementById("revenueChart").getContext("2d");
+
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Revenue",
+          data: revenue,
+          borderColor: "#1f3a5f",
+          tension: 0.2
+        },
+        {
+          label: "Expenses",
+          data: expenses,
+          borderColor: "#999",
+          tension: 0.2
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "bottom"
+        }
+      }
+    }
+  });
+}
+
+loadFinancialData();
+</script>
+
 <body>
 
   <header>
