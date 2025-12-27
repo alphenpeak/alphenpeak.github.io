@@ -37,12 +37,18 @@
   </p>
 
   <!-- Month Filter -->
-  <div style="margin: 1.5rem 0;">
-    <label for="monthFilter"><strong>Month:</strong></label>
-    <select id="monthFilter">
-      <option value="all">All months</option>
-    </select>
-  </div>
+ <div style="margin: 1.5rem 0; display: flex; gap: 1rem; align-items: center;">
+  <label>
+    From:
+    <select id="fromMonth"></select>
+  </label>
+
+  <label>
+    To:
+    <select id="toMonth"></select>
+  </label>
+</div>
+
 
   <!-- KPIs -->
   <div class="kpi-grid">
