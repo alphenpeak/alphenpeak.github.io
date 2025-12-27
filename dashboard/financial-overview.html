@@ -97,34 +97,49 @@ async function loadFinancialData() {
     };
   });
 
-  populateMonthFilter();
-  applyFilter("all");
+  populateRangeFilters();
+  applyRangeFilter();
 }
 
-function populateMonthFilter() {
-  const select = document.getElementById("monthFilter");
+function populateRangeFilters() {
+  const fromSelect = document.getElementById("fromMonth");
+  const toSelect = document.getElementById("toMonth");
 
   fullData.forEach(d => {
-    const option = document.createElement("option");
-    option.value = d.month;
-    option.textContent = d.month;
-    select.appendChild(option);
+    const optFrom = document.createElement("option");
+    optFrom.value = d.month;
+    optFrom.textContent = d.month;
+
+    const optTo = optFrom.cloneNode(true);
+
+    fromSelect.appendChild(optFrom);
+    toSelect.appendChild(optTo);
   });
 
-  select.addEventListener("change", e => {
-    applyFilter(e.target.value);
-  });
+  // Default: full range
+  fromSelect.selectedIndex = 0;
+  toSelect.selectedIndex = fullData.length - 1;
+
+  fromSelect.addEventListener("change", applyRangeFilter);
+  toSelect.addEventListener("change", applyRangeFilter);
 }
 
-function applyFilter(selectedMonth) {
-  const filtered =
-    selectedMonth === "all"
-      ? fullData
-      : fullData.filter(d => d.month === selectedMonth);
+function applyRangeFilter() {
+  const fromMonth = document.getElementById("fromMonth").value;
+  const toMonth = document.getElementById("toMonth").value;
 
-  const labels = filtered.map(d => d.month);
-  const revenue = filtered.map(d => d.revenue);
-  const expenses = filtered.map(d => d.expenses);
+  const fromIndex = fullData.findIndex(d => d.month === fromMonth);
+  const toIndex = fullData.findIndex(d => d.month === toMonth);
+
+  if (fromIndex === -1 || toIndex === -1 || fromIndex > toIndex) {
+    return; // invalid range, do nothing
+  }
+
+  const slice = fullData.slice(fromIndex, toIndex + 1);
+
+  const labels = slice.map(d => d.month);
+  const revenue = slice.map(d => d.revenue);
+  const expenses = slice.map(d => d.expenses);
 
   const totalRevenue = revenue.reduce((a, b) => a + b, 0);
   const totalExpenses = expenses.reduce((a, b) => a + b, 0);
@@ -168,6 +183,7 @@ function renderChart(labels, revenue, expenses) {
           borderColor: "#1f3a5f",
           backgroundColor: "transparent",
           pointBackgroundColor: "#1f3a5f",
+          pointRadius: 4,
           fill: false,
           tension: 0.2
         },
@@ -177,6 +193,7 @@ function renderChart(labels, revenue, expenses) {
           borderColor: "#999",
           backgroundColor: "transparent",
           pointBackgroundColor: "#999",
+          pointRadius: 4,
           fill: false,
           tension: 0.2
         }
