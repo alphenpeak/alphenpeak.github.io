@@ -153,3 +153,29 @@ button:hover {
   color: var(--accent);
 }
 
+/* ---------- KPI Cards ---------- */
+
+.kpi-card {
+  background-color: #f4f6f8;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  min-width: 180px;
+}
+
+.kpi-card strong {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: #555;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+}
+
+.kpi-card div {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+  
+
