@@ -11,11 +11,14 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
   <script>
+    let fullData = [];
+let chartInstance = null;
+
 async function loadFinancialData() {
   const response = await fetch("data/financials.csv");
   const text = await response.text();
 
-  const rows = text.trim().split("\n").slice(1);
+const rows = text.trim().split("\n").slice(1);
 const labels = [];
 const revenue = [];
 const expenses = [];
@@ -24,17 +27,36 @@ let totalRevenue = 0;
 let totalExpenses = 0;
 
 
-  rows.forEach(row => {
-    const [month, rev, exp] = row.split(",");
-    labels.push(month);
-    revenue.push(Number(rev));
-    expenses.push(Number(exp));
-    totalRevenue += Number(rev);
-    totalExpenses += Number(exp);
+rows.forEach(row => {
+  const [month, rev, exp] = row.split(",");
 
+  fullData.push({
+    month: month,
+    revenue: Number(rev),
+    expenses: Number(exp)
   });
+});
+
+function applyFilter(selectedMonth) {
+  const filtered =
+    selectedMonth === "all"
+      ? fullData
+      : fullData.filter(d => d.month === selectedMonth);
+
+  const labels = filtered.map(d => d.month);
+  const revenue = filtered.map(d => d.revenue);
+  const expenses = filtered.map(d => d.expenses);
+
+  updateKPIs(
+    revenue.reduce((a, b) => a + b, 0),
+    expenses.reduce((a, b) => a + b, 0)
+  );
+populateMonthFilter();
+ applyFilter("all");
+}
+
   updateKPIs(totalRevenue, totalExpenses);
-  renderChart(labels, revenue, expenses);
+applyFilter("all");
   function updateKPIs(totalRevenue, totalExpenses) {
   const profit = totalRevenue - totalExpenses;
   const margin = (profit / totalRevenue) * 100;
@@ -56,8 +78,27 @@ let totalExpenses = 0;
 
 function renderChart(labels, revenue, expenses) {
   const ctx = document.getElementById("revenueChart").getContext("2d");
+  if (chartInstance) {
+  chartInstance.destroy();
+}
+function populateMonthFilter() {
+  const select = document.getElementById("monthFilter");
 
-  new Chart(ctx, {
+  fullData.forEach(d => {
+    const option = document.createElement("option");
+    option.value = d.month;
+    option.textContent = d.month;
+    select.appendChild(option);
+  });
+
+  select.addEventListener("change", e => {
+    applyFilter(e.target.value);
+  });
+}
+
+
+chartInstance = new Chart(ctx, {
+
     type: "line",
     data: {
       labels: labels,
