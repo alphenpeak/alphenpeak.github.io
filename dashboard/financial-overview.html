@@ -10,33 +10,32 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-  <script>
-    let fullData = [];
+ <script>
+/* ---------- Global state ---------- */
+let fullData = [];
 let chartInstance = null;
 
+/* ---------- Load data ---------- */
 async function loadFinancialData() {
   const response = await fetch("data/financials.csv");
   const text = await response.text();
 
-const rows = text.trim().split("\n").slice(1);
-const labels = [];
-const revenue = [];
-const expenses = [];
+  const rows = text.trim().split("\n").slice(1);
 
-let totalRevenue = 0;
-let totalExpenses = 0;
-
-
-rows.forEach(row => {
-  const [month, rev, exp] = row.split(",");
-
-  fullData.push({
-    month: month,
-    revenue: Number(rev),
-    expenses: Number(exp)
+  fullData = rows.map(row => {
+    const [month, rev, exp] = row.split(",");
+    return {
+      month,
+      revenue: Number(rev),
+      expenses: Number(exp)
+    };
   });
-});
 
+  populateMonthFilter();
+  applyFilter("all");
+}
+
+/* ---------- Filtering ---------- */
 function applyFilter(selectedMonth) {
   const filtered =
     selectedMonth === "all"
@@ -51,15 +50,14 @@ function applyFilter(selectedMonth) {
     revenue.reduce((a, b) => a + b, 0),
     expenses.reduce((a, b) => a + b, 0)
   );
-populateMonthFilter();
- applyFilter("all");
+
+  renderChart(labels, revenue, expenses);
 }
 
-  updateKPIs(totalRevenue, totalExpenses);
-applyFilter("all");
-  function updateKPIs(totalRevenue, totalExpenses) {
+/* ---------- KPI update ---------- */
+function updateKPIs(totalRevenue, totalExpenses) {
   const profit = totalRevenue - totalExpenses;
-  const margin = (profit / totalRevenue) * 100;
+  const margin = totalRevenue ? (profit / totalRevenue) * 100 : 0;
 
   document.getElementById("kpi-revenue").textContent =
     totalRevenue.toLocaleString("en-ZA", { style: "currency", currency: "ZAR" });
@@ -74,15 +72,69 @@ applyFilter("all");
     margin.toFixed(1) + "%";
 }
 
-}
-
+/* ---------- Chart rendering ---------- */
 function renderChart(labels, revenue, expenses) {
   const ctx = document.getElementById("revenueChart").getContext("2d");
+
   if (chartInstance) {
-  chartInstance.destroy();
+    chartInstance.destroy();
+  }
+
+  chartInstance = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "Revenue",
+          data: revenue,
+          borderColor: "#1f3a5f",
+          backgroundColor: "transparent",
+          pointBackgroundColor: "#1f3a5f",
+          fill: false,
+          tension: 0.2
+        },
+        {
+          label: "Expenses",
+          data: expenses,
+          borderColor: "#999",
+          backgroundColor: "transparent",
+          pointBackgroundColor: "#999",
+          fill: false,
+          tension: 0.2
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+            generateLabels: chart =>
+              chart.data.datasets.map((ds, i) => ({
+                text: ds.label,
+                strokeStyle: ds.borderColor,
+                fillStyle: ds.borderColor,
+                lineWidth: 2,
+                pointStyle: "line",
+                hidden: !chart.isDatasetVisible(i),
+                index: i
+              }))
+          }
+        }
+      }
+    }
+  });
 }
+
+/* ---------- Dropdown ---------- */
 function populateMonthFilter() {
   const select = document.getElementById("monthFilter");
+
+  // prevent duplicates
+  select.innerHTML = '<option value="all">All months</option>';
 
   fullData.forEach(d => {
     const option = document.createElement("option");
@@ -91,69 +143,13 @@ function populateMonthFilter() {
     select.appendChild(option);
   });
 
-  select.addEventListener("change", e => {
-    applyFilter(e.target.value);
-  });
+  select.addEventListener("change", e =>
+    applyFilter(e.target.value)
+  );
 }
 
-
-chartInstance = new Chart(ctx, {
-
-    type: "line",
-    data: {
-      labels: labels,
-      datasets: [
-        {
-  label: "Revenue",
-  data: revenue,
-  borderColor: "#1f3a5f",
-  backgroundColor: "transparent",
-  pointBackgroundColor: "#1f3a5f",
-  fill: false,
-  tension: 0.2
-},
-        {
-  label: "Expenses",
-  data: expenses,
-  borderColor: "#999",
-  backgroundColor: "transparent",
-  pointBackgroundColor: "#999",
-  fill: false,
-  tension: 0.2
-}
-
-      ]
-    },
-  options: {
-  responsive: true,
-  plugins: {
-    legend: {
-  position: "bottom",
-  labels: {
-    usePointStyle: true,
-    generateLabels: function(chart) {
-      const datasets = chart.data.datasets;
-      return datasets.map((dataset, i) => ({
-        text: dataset.label,
-        strokeStyle: dataset.borderColor,
-        fillStyle: dataset.borderColor,
-        lineWidth: 2,
-        pointStyle: "line",
-        hidden: !chart.isDatasetVisible(i),
-        index: i
-      }));
-    }
-  }
-}
-
-  }
-}
-
-
-  });
-}
-
-loadFinancialData();
+/* ---------- Kick off AFTER DOM ---------- */
+document.addEventListener("DOMContentLoaded", loadFinancialData);
 </script>
 
 <body>
