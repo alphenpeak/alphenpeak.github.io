@@ -102,4 +102,65 @@ function updateKPIs(totalRevenue, totalExpenses) {
   document.getElementById("kpi-expenses").textContent =
     totalExpenses.toLocaleString("en-ZA", { style: "currency", currency: "ZAR" });
 
-  d
+  document.getElementById("kpi-profit").textContent =
+    profit.toLocaleString("en-ZA", { style: "currency", currency: "ZAR" });
+
+  document.getElementById("kpi-margin").textContent =
+    margin.toFixed(1) + "%";
+}
+
+function renderChart(labels, revenue, expenses) {
+  const ctx = document.getElementById("revenueChart").getContext("2d");
+
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Revenue",
+          data: revenue,
+          borderColor: "#1f3a5f",
+          backgroundColor: "transparent",
+          pointBackgroundColor: "#1f3a5f",
+          fill: false,
+          tension: 0.2
+        },
+        {
+          label: "Expenses",
+          data: expenses,
+          borderColor: "#999",
+          backgroundColor: "transparent",
+          pointBackgroundColor: "#999",
+          fill: false,
+          tension: 0.2
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+            generateLabels: chart =>
+              chart.data.datasets.map((ds, i) => ({
+                text: ds.label,
+                strokeStyle: ds.borderColor,
+                fillStyle: ds.borderColor,
+                lineWidth: 2,
+                pointStyle: "line",
+                hidden: !chart.isDatasetVisible(i),
+                index: i
+              }))
+          }
+        }
+      }
+    }
+  });
+}
+</script>
+
+</body>
+</html>
