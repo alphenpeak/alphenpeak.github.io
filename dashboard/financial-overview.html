@@ -36,6 +36,15 @@
     for a small business.
   </p>
 
+  <!-- Month Filter -->
+  <div style="margin: 1.5rem 0;">
+    <label for="monthFilter"><strong>Month:</strong></label>
+    <select id="monthFilter">
+      <option value="all">All months</option>
+    </select>
+  </div>
+
+  <!-- KPIs -->
   <div class="kpi-grid">
     <div class="kpi">
       <div class="kpi-label">Total Revenue</div>
@@ -64,29 +73,55 @@
 <script>
 document.addEventListener("DOMContentLoaded", loadFinancialData);
 
+let fullData = [];
+let chartInstance = null;
+
 async function loadFinancialData() {
   const response = await fetch("data/financials.csv");
   const text = await response.text();
 
   const rows = text.trim().split("\n").slice(1);
 
-  const labels = [];
-  const revenue = [];
-  const expenses = [];
-
-  let totalRevenue = 0;
-  let totalExpenses = 0;
-
-  rows.forEach(row => {
+  fullData = rows.map(row => {
     const [month, rev, exp] = row.split(",");
-
-    labels.push(month);
-    revenue.push(Number(rev));
-    expenses.push(Number(exp));
-
-    totalRevenue += Number(rev);
-    totalExpenses += Number(exp);
+    return {
+      month,
+      revenue: Number(rev),
+      expenses: Number(exp)
+    };
   });
+
+  populateMonthFilter();
+  applyFilter("all");
+}
+
+function populateMonthFilter() {
+  const select = document.getElementById("monthFilter");
+
+  fullData.forEach(d => {
+    const option = document.createElement("option");
+    option.value = d.month;
+    option.textContent = d.month;
+    select.appendChild(option);
+  });
+
+  select.addEventListener("change", e => {
+    applyFilter(e.target.value);
+  });
+}
+
+function applyFilter(selectedMonth) {
+  const filtered =
+    selectedMonth === "all"
+      ? fullData
+      : fullData.filter(d => d.month === selectedMonth);
+
+  const labels = filtered.map(d => d.month);
+  const revenue = filtered.map(d => d.revenue);
+  const expenses = filtered.map(d => d.expenses);
+
+  const totalRevenue = revenue.reduce((a, b) => a + b, 0);
+  const totalExpenses = expenses.reduce((a, b) => a + b, 0);
 
   updateKPIs(totalRevenue, totalExpenses);
   renderChart(labels, revenue, expenses);
@@ -112,10 +147,14 @@ function updateKPIs(totalRevenue, totalExpenses) {
 function renderChart(labels, revenue, expenses) {
   const ctx = document.getElementById("revenueChart").getContext("2d");
 
-  new Chart(ctx, {
+  if (chartInstance) {
+    chartInstance.destroy();
+  }
+
+  chartInstance = new Chart(ctx, {
     type: "line",
     data: {
-      labels: labels,
+      labels,
       datasets: [
         {
           label: "Revenue",
