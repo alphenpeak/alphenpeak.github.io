@@ -10,14 +10,13 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
- 
 <body>
 
 <header>
   <div class="header-inner">
     <div>
       <h1>Alphen Peak</h1>
-      <p>Accounting and financial systems support</p>
+      <p>Accounting and financial systems support for growing businesses</p>
     </div>
 
     <nav>
@@ -30,198 +29,132 @@
 </header>
 
 <main>
+
   <h2>Financial Overview</h2>
   <p>
-    Example management dashboard showing a high-level financial snapshot
+    Example management dashboard showing a simplified financial snapshot
     for a small business.
   </p>
 
-  <!-- Month Filter -->
- <div style="margin: 1.5rem 0; display: flex; gap: 1rem; align-items: center;">
-  <label>
-    From:
-    <select id="fromMonth"></select>
-  </label>
+  <!-- Filters -->
+  <div style="margin: 1.5rem 0;">
+    <label>
+      From:
+      <select id="fromMonth"></select>
+    </label>
 
-  <label>
-    To:
-    <select id="toMonth"></select>
-  </label>
-</div>
+    <label style="margin-left: 1rem;">
+      To:
+      <select id="toMonth"></select>
+    </label>
+  </div>
 
-
-  <!-- KPIs -->
-  <div class="kpi-grid">
-    <div class="kpi">
-      <div class="kpi-label">Total Revenue</div>
-      <div class="kpi-value" id="kpi-revenue">—</div>
+  <!-- KPI Cards -->
+  <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+    <div class="kpi-card">
+      <strong>Total Revenue</strong>
+      <div id="totalRevenue">—</div>
     </div>
-
-    <div class="kpi">
-      <div class="kpi-label">Total Expenses</div>
-      <div class="kpi-value" id="kpi-expenses">—</div>
+    <div class="kpi-card">
+      <strong>Total Expenses</strong>
+      <div id="totalExpenses">—</div>
     </div>
-
-    <div class="kpi">
-      <div class="kpi-label">Gross Profit</div>
-      <div class="kpi-value" id="kpi-profit">—</div>
+    <div class="kpi-card">
+      <strong>Gross Profit</strong>
+      <div id="grossProfit">—</div>
     </div>
-
-    <div class="kpi">
-      <div class="kpi-label">Gross Margin</div>
-      <div class="kpi-value" id="kpi-margin">—</div>
+    <div class="kpi-card">
+      <strong>Gross Margin</strong>
+      <div id="grossMargin">—</div>
     </div>
   </div>
 
+  <!-- Chart -->
   <canvas id="revenueChart" height="120"></canvas>
+
 </main>
 
 <script>
-document.addEventListener("DOMContentLoaded", loadFinancialData);
+const data = [
+  { month: "2024-01", revenue: 120000, expenses: 80000 },
+  { month: "2024-02", revenue: 135000, expenses: 90000 },
+  { month: "2024-03", revenue: 150000, expenses: 95000 },
+  { month: "2024-04", revenue: 145000, expenses: 92000 },
+  { month: "2024-05", revenue: 160000, expenses: 100000 }
+];
 
-let fullData = [];
-let chartInstance = null;
+// Populate dropdowns
+const fromSelect = document.getElementById("fromMonth");
+const toSelect = document.getElementById("toMonth");
 
-async function loadFinancialData() {
-  const response = await fetch("data/financials.csv");
-  const text = await response.text();
+data.forEach(row => {
+  const opt1 = document.createElement("option");
+  opt1.value = row.month;
+  opt1.textContent = row.month;
+  fromSelect.appendChild(opt1);
 
-  const rows = text.trim().split("\n").slice(1);
+  const opt2 = document.createElement("option");
+  opt2.value = row.month;
+  opt2.textContent = row.month;
+  toSelect.appendChild(opt2);
+});
 
-  fullData = rows.map(row => {
-    const [month, rev, exp] = row.split(",");
-    return {
-      month,
-      revenue: Number(rev),
-      expenses: Number(exp)
-    };
-  });
+// Default selection
+fromSelect.selectedIndex = 0;
+toSelect.selectedIndex = data.length - 1;
 
-  populateRangeFilters();
-  applyRangeFilter();
-}
+let chart;
 
-function populateRangeFilters() {
-  const fromSelect = document.getElementById("fromMonth");
-  const toSelect = document.getElementById("toMonth");
+function renderDashboard() {
+  const from = fromSelect.value;
+  const to = toSelect.value;
 
-  fullData.forEach(d => {
-    const optFrom = document.createElement("option");
-    optFrom.value = d.month;
-    optFrom.textContent = d.month;
+  const filtered = data.filter(d => d.month >= from && d.month <= to);
 
-    const optTo = optFrom.cloneNode(true);
+  const totalRevenue = filtered.reduce((sum, d) => sum + d.revenue, 0);
+  const totalExpenses = filtered.reduce((sum, d) => sum + d.expenses, 0);
+  const grossProfit = totalRevenue - totalExpenses;
+  const grossMargin = totalRevenue
+    ? ((grossProfit / totalRevenue) * 100).toFixed(1) + "%"
+    : "—";
 
-    fromSelect.appendChild(optFrom);
-    toSelect.appendChild(optTo);
-  });
+  document.getElementById("totalRevenue").textContent = totalRevenue.toLocaleString();
+  document.getElementById("totalExpenses").textContent = totalExpenses.toLocaleString();
+  document.getElementById("grossProfit").textContent = grossProfit.toLocaleString();
+  document.getElementById("grossMargin").textContent = grossMargin;
 
-  // Default: full range
-  fromSelect.selectedIndex = 0;
-  toSelect.selectedIndex = fullData.length - 1;
+  const labels = filtered.map(d => d.month);
+  const revenues = filtered.map(d => d.revenue);
 
-  fromSelect.addEventListener("change", applyRangeFilter);
-  toSelect.addEventListener("change", applyRangeFilter);
-}
+  if (chart) chart.destroy();
 
-function applyRangeFilter() {
-  const fromMonth = document.getElementById("fromMonth").value;
-  const toMonth = document.getElementById("toMonth").value;
-
-  const fromIndex = fullData.findIndex(d => d.month === fromMonth);
-  const toIndex = fullData.findIndex(d => d.month === toMonth);
-
-  if (fromIndex === -1 || toIndex === -1 || fromIndex > toIndex) {
-    return; // invalid range, do nothing
-  }
-
-  const slice = fullData.slice(fromIndex, toIndex + 1);
-
-  const labels = slice.map(d => d.month);
-  const revenue = slice.map(d => d.revenue);
-  const expenses = slice.map(d => d.expenses);
-
-  const totalRevenue = revenue.reduce((a, b) => a + b, 0);
-  const totalExpenses = expenses.reduce((a, b) => a + b, 0);
-
-  updateKPIs(totalRevenue, totalExpenses);
-  renderChart(labels, revenue, expenses);
-}
-
-function updateKPIs(totalRevenue, totalExpenses) {
-  const profit = totalRevenue - totalExpenses;
-  const margin = totalRevenue ? (profit / totalRevenue) * 100 : 0;
-
-  document.getElementById("kpi-revenue").textContent =
-    totalRevenue.toLocaleString("en-ZA", { style: "currency", currency: "ZAR" });
-
-  document.getElementById("kpi-expenses").textContent =
-    totalExpenses.toLocaleString("en-ZA", { style: "currency", currency: "ZAR" });
-
-  document.getElementById("kpi-profit").textContent =
-    profit.toLocaleString("en-ZA", { style: "currency", currency: "ZAR" });
-
-  document.getElementById("kpi-margin").textContent =
-    margin.toFixed(1) + "%";
-}
-
-function renderChart(labels, revenue, expenses) {
-  const ctx = document.getElementById("revenueChart").getContext("2d");
-
-  if (chartInstance) {
-    chartInstance.destroy();
-  }
-
-  chartInstance = new Chart(ctx, {
+  chart = new Chart(document.getElementById("revenueChart"), {
     type: "line",
     data: {
       labels,
-      datasets: [
-        {
-          label: "Revenue",
-          data: revenue,
-          borderColor: "#1f3a5f",
-          backgroundColor: "transparent",
-          pointBackgroundColor: "#1f3a5f",
-          pointRadius: 4,
-          fill: false,
-          tension: 0.2
-        },
-        {
-          label: "Expenses",
-          data: expenses,
-          borderColor: "#999",
-          backgroundColor: "transparent",
-          pointBackgroundColor: "#999",
-          pointRadius: 4,
-          fill: false,
-          tension: 0.2
-        }
-      ]
+      datasets: [{
+        label: "Revenue",
+        data: revenues,
+        borderColor: "#1f3a5f",
+        backgroundColor: "rgba(31, 58, 95, 0.1)",
+        tension: 0.3,
+        fill: true
+      }]
     },
     options: {
       responsive: true,
       plugins: {
-        legend: {
-          position: "bottom",
-          labels: {
-            usePointStyle: true,
-            generateLabels: chart =>
-              chart.data.datasets.map((ds, i) => ({
-                text: ds.label,
-                strokeStyle: ds.borderColor,
-                fillStyle: ds.borderColor,
-                lineWidth: 2,
-                pointStyle: "line",
-                hidden: !chart.isDatasetVisible(i),
-                index: i
-              }))
-          }
-        }
+        legend: { display: false }
       }
     }
   });
 }
+
+fromSelect.addEventListener("change", renderDashboard);
+toSelect.addEventListener("change", renderDashboard);
+
+// Initial render
+renderDashboard();
 </script>
 
 </body>
