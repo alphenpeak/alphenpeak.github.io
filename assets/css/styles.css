@@ -54,7 +54,10 @@ header h1,
 header p {
   text-align: left;
 }
-
+nav {
+  display: flex;
+  align-items: flex-start;
+}
 
 nav a {
   margin-left: 1.5rem;
