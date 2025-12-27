@@ -1,184 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Financial Overview | Alphen Peak</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Financial Overview | Alphen Peak</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="../assets/css/styles.css">
+  <link rel="stylesheet" href="../assets/css/styles.css">
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<script>
-async function loadFinancialData() {
-const response = await fetch("data/financials.csv");
-const text = await response.text();
-
-const rows = text.trim().split("\n").slice(1);
-const labels = [];
-const revenue = [];
-const expenses = [];
-
-let totalRevenue = 0;
-let totalExpenses = 0;
-
-
-rows.forEach(row => {
-const [month, rev, exp] = row.split(",");
-labels.push(month);
-revenue.push(Number(rev));
-expenses.push(Number(exp));
-totalRevenue += Number(rev);
-totalExpenses += Number(exp);
-
-});
-updateKPIs(totalRevenue, totalExpenses);
-renderChart(labels, revenue, expenses);
-function updateKPIs(totalRevenue, totalExpenses) {
-const profit = totalRevenue - totalExpenses;
-const margin = (profit / totalRevenue) * 100;
-
-document.getElementById("kpi-revenue").textContent =
-totalRevenue.toLocaleString("en-ZA", { style: "currency", currency: "ZAR" });
-
-document.getElementById("kpi-expenses").textContent =
-totalExpenses.toLocaleString("en-ZA", { style: "currency", currency: "ZAR" });
-
-document.getElementById("kpi-profit").textContent =
-profit.toLocaleString("en-ZA", { style: "currency", currency: "ZAR" });
-
-document.getElementById("kpi-margin").textContent =
-margin.toFixed(1) + "%";
-}
-
-}
-
-function renderChart(labels, revenue, expenses) {
-const ctx = document.getElementById("revenueChart").getContext("2d");
-
-new Chart(ctx, {
-type: "line",
-data: {
-labels: labels,
-datasets: [
-{
-label: "Revenue",
-data: revenue,
-borderColor: "#1f3a5f",
-backgroundColor: "transparent",
-pointBackgroundColor: "#1f3a5f",
-fill: false,
-tension: 0.2
-},
-{
-label: "Expenses",
-data: expenses,
-borderColor: "#999",
-backgroundColor: "transparent",
-pointBackgroundColor: "#999",
-fill: false,
-tension: 0.2
-}
-
-]
-},
-options: {
-responsive: true,
-plugins: {
-legend: {
-      position: "bottom",
-      labels: {
-        usePointStyle: true,
-        generateLabels: function(chart) {
-          const datasets = chart.data.datasets;
-          return datasets.map((dataset, i) => ({
-            text: dataset.label,
-            strokeStyle: dataset.borderColor,
-            fillStyle: dataset.borderColor,
-            lineWidth: 2,
-            hidden: !chart.isDatasetVisible(i),
-            index: i
-          }));
-        }
-      }
-  position: "bottom",
-  labels: {
-    usePointStyle: true,
-    generateLabels: function(chart) {
-      const datasets = chart.data.datasets;
-      return datasets.map((dataset, i) => ({
-        text: dataset.label,
-        strokeStyle: dataset.borderColor,
-        fillStyle: dataset.borderColor,
-        lineWidth: 2,
-        pointStyle: "line",
-        hidden: !chart.isDatasetVisible(i),
-        index: i
-      }));
-}
-}
-}
-
-  }
-}
-
-
-});
-}
-
-loadFinancialData();
-</script>
 
 <body>
 
 <header>
-<div class="header-inner">
-<div>
-<h1>Alphen Peak</h1>
-<p>Accounting and financial systems support</p>
-</div>
+  <div class="header-inner">
+    <div>
+      <h1>Alphen Peak</h1>
+      <p>Accounting and financial systems support</p>
+    </div>
 
-<nav>
-<a href="../index.html">Home</a>
-<a href="../services.html">Services</a>
-<a href="../about.html">About</a>
-<a href="../contact.html">Contact</a>
-</nav>
-</div>
+    <nav>
+      <a href="../index.html">Home</a>
+      <a href="../services.html">Services</a>
+      <a href="../about.html">About</a>
+      <a href="../contact.html">Contact</a>
+    </nav>
+  </div>
 </header>
 
 <main>
-<h2>Financial Overview</h2>
-<p>
-Example management dashboard showing a high-level financial snapshot
-for a small business.
-</p>
-<div class="kpi-grid">
-<div class="kpi">
-<div class="kpi-label">Total Revenue</div>
-<div class="kpi-value" id="kpi-revenue">—</div>
-</div>
+  <h2>Financial Overview</h2>
+  <p>
+    Example management dashboard showing a high-level financial snapshot
+    for a small business.
+  </p>
 
-<div class="kpi">
-<div class="kpi-label">Total Expenses</div>
-<div class="kpi-value" id="kpi-expenses">—</div>
-</div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Total Revenue</div>
+      <div class="kpi-value" id="kpi-revenue">—</div>
+    </div>
 
-<div class="kpi">
-<div class="kpi-label">Gross Profit</div>
-<div class="kpi-value" id="kpi-profit">—</div>
-</div>
+    <div class="kpi">
+      <div class="kpi-label">Total Expenses</div>
+      <div class="kpi-value" id="kpi-expenses">—</div>
+    </div>
 
-<div class="kpi">
-<div class="kpi-label">Gross Margin</div>
-<div class="kpi-value" id="kpi-margin">—</div>
-</div>
-</div>
+    <div class="kpi">
+      <div class="kpi-label">Gross Profit</div>
+      <div class="kpi-value" id="kpi-profit">—</div>
+    </div>
 
+    <div class="kpi">
+      <div class="kpi-label">Gross Margin</div>
+      <div class="kpi-value" id="kpi-margin">—</div>
+    </div>
+  </div>
 
-<canvas id="revenueChart" height="120"></canvas>
+  <canvas id="revenueChart" height="120"></canvas>
 </main>
 
-</body>
-</html>
+<script>
+document.addEventListener("DOMContentLoaded", loadFinancialData);
+
+async function loadFinancialData() {
+  const response = await fetch("data/financials.csv");
+  const text = await response.text();
+
+  const rows = text.trim().split("\n").slice(1);
+
+  const labels = [];
+  const revenue = [];
+  const expenses = [];
+
+  let totalRevenue = 0;
+  let totalExpenses = 0;
+
+  rows.forEach(row => {
+    const [month, rev, exp] = row.split(",");
+
+    labels.push(month);
+    revenue.push(Number(rev));
+    expenses.push(Number(exp));
+
+    totalRevenue += Number(rev);
+    totalExpenses += Number(exp);
+  });
+
+  updateKPIs(totalRevenue, totalExpenses);
+  renderChart(labels, revenue, expenses);
+}
+
+function updateKPIs(totalRevenue, totalExpenses) {
+  const profit = totalRevenue - totalExpenses;
+  const margin = totalRevenue ? (profit / totalRevenue) * 100 : 0;
+
+  document.getElementById("kpi-revenue").textContent =
+    totalRevenue.toLocaleString("en-ZA", { style: "currency", currency: "ZAR" });
+
+  document.getElementById("kpi-expenses").textContent =
+    totalExpenses.toLocaleString("en-ZA", { style: "currency", currency: "ZAR" });
+
+  d
