@@ -73,6 +73,7 @@ nav a.nav-item {
 .nav-group {
   display: flex;
   flex-direction: column;
+  width: max-content;
 }
 
 /* Dashboard sub-link styling */
