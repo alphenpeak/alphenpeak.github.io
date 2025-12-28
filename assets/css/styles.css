@@ -59,12 +59,47 @@ nav {
   align-items: flex-start;
 }
 
-nav a {
+/*nav a {
+  margin-left: 1.5rem;
+  text-decoration: none;
+  color: #222;
+  font-weight: 500;
+} */
+
+nav {
+  display: flex;
+  align-items: flex-start;
+}
+
+/* Only top-level nav links (Services, About, Contact) */
+nav > a {
   margin-left: 1.5rem;
   text-decoration: none;
   color: #222;
   font-weight: 500;
 }
+
+/* Group Home + Dashboard vertically */
+.nav-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Remove horizontal spacing inside the group */
+.nav-group a {
+  margin-left: 0;
+  text-decoration: none;
+  color: #222;
+  font-weight: 500;
+}
+
+/* Dashboard example styling */
+.nav-dashboard {
+  font-size: 0.85rem;
+  color: var(--accent);
+  margin-top: 0.25rem;
+}
+
 
 nav a:hover {
   text-decoration: underline;
