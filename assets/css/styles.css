@@ -1,30 +1,91 @@
 :root {
-  --accent: #1f3a5f;
+  --accent: #1f3a5f; /* navy */
 }
 
+/* ---------- Base ---------- */
 
 body {
   font-family: Arial, Helvetica, sans-serif;
   line-height: 1.6;
   margin: 0;
   padding: 0;
-  color: #222; 
-}   
+  color: #222;
+}
 
-header {
-  padding: 0.2rem;  
-  background-color: #f4f6f8;
-  border-bottom: 2px solid var(--accent);     
-} 
- 
 main {
   padding: 2rem;
   max-width: 800px;
-} 
-
-h1 {
-  margin-bottom: 0.5rem;
 }
+
+/* ---------- Header ---------- */
+
+header {
+  background-color: #f4f6f8;
+  border-bottom: 2px solid var(--accent);
+}
+
+.header-inner {
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between; /* logo left, nav right */
+  align-items: center;
+}
+
+/* Logo text */
+header h1 {
+  margin: 0;
+}
+
+header p {
+  margin: 0.25rem 0 0;
+  font-size: 0.95rem;
+}
+
+/* ---------- Navigation ---------- */
+
+nav {
+  display: flex;
+  align-items: flex-start;
+}
+
+/* Base styling for ALL nav links */
+nav a {
+  text-decoration: none;
+  color: #222;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+nav a:hover {
+  text-decoration: underline;
+  color: var(--accent);
+}
+
+/* Space between top-level nav items */
+nav > * + * {
+  margin-left: 1.5rem;
+}
+
+/* Home + Dashboard stack */
+.nav-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Dashboard sub-link styling */
+.nav-dashboard {
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+  color: #555;
+}
+
+.nav-dashboard:hover {
+  color: var(--accent);
+}
+
+/* ---------- Headings ---------- */
 
 h2 {
   margin-top: 2.5rem;
@@ -37,83 +98,11 @@ h3 {
   font-weight: 600;
 }
 
-
 p {
   margin-top: 0.5rem;
 }
 
-.header-inner {
-  max-width: 1800px;
-  margin: 0 auto;
-  padding: 0 2rem;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 3rem;
-}
-header h1,
-header p {
-  text-align: left;
-}
-nav {
-  display: flex;
-  align-items: flex-start;
-}
-
-/*nav a {
-  margin-left: 1.5rem;
-  text-decoration: none;
-  color: #222;
-  font-weight: 500;
-} */
-
-nav {
-  display: flex;
-  align-items: flex-start;
-}
-nav a {
-  text-decoration: none;
-  color: #222;
-  font-weight: 500;
-  font-size: 1rem;
-}
-
-/* Only top-level nav links (Services, About, Contact) */
-nav > a {
-  margin-left: 1.5rem;
-  text-decoration: none;
-  color: #222;
-  font-weight: 500;
-}
-
-/* Group Home + Dashboard vertically */
-.nav-group {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Remove horizontal spacing inside the group */
-.nav-group a {
-  margin-left: 0;
-  text-decoration: none;
-  color: #222;
-  font-weight: 500;
-}
-
-/* Dashboard example styling */
-.nav-dashboard {
-  font-size: 0.85rem;
-  color: var(--accent);
-  margin-top: 0.25rem;
-}
-
-
-nav a:hover {
-  text-decoration: underline;
-  color: var(--accent);
-}
-
-/* ---------- Form Styling ---------- */
+/* ---------- Forms ---------- */
 
 form {
   max-width: 500px;
@@ -161,9 +150,8 @@ button {
 }
 
 button:hover {
-  background-color: #162c46; /* darker navy */
+  background-color: #162c46;
 }
-
 
 /* ---------- KPI Dashboard ---------- */
 
@@ -174,35 +162,11 @@ button:hover {
   margin: 2rem 0;
 }
 
-.kpi {
-  background: #f4f6f8;
-  padding: 1rem 1.25rem;
-  border-radius: 6px;
-  border: 1px solid #e0e0e0;
-}
-
-.kpi-label {
-  font-size: 0.8rem;
-  color: #666;
-  margin-bottom: 0.25rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.kpi-value {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-/* ---------- KPI Cards ---------- */
-
 .kpi-card {
   background-color: #f4f6f8;
   border: 1px solid #ddd;
   border-radius: 6px;
   padding: 1rem 1.25rem;
-  min-width: 180px;
 }
 
 .kpi-card strong {
@@ -219,5 +183,3 @@ button:hover {
   font-weight: 600;
   color: var(--accent);
 }
-  
-
