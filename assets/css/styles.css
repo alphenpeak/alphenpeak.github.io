@@ -70,25 +70,32 @@ nav a.nav-item {
 
 
 /* Home + Dashboard stack */
+
+
+/* ---------- Headings ---------- */
 .nav-group {
-  display: flex;
-  flex-direction: column;
-  width: max-content;
+  position: relative;
 }
 
-/* Dashboard sub-link styling */
+/* Home link controls layout width */
+.nav-home {
+  display: inline-block;
+}
+
+/* Dashboard sits visually under Home but does NOT affect layout */
 .nav-dashboard {
+  position: absolute;
+  top: 100%;
+  left: 0;
   font-size: 0.9rem;
-  margin-top: 0.25rem;
   color: #555;
+  margin-top: 0.25rem;
   white-space: nowrap;
 }
 
 .nav-dashboard:hover {
   color: var(--accent);
 }
-
-/* ---------- Headings ---------- */
 
 h2 {
   margin-top: 2.5rem;
