@@ -81,6 +81,7 @@ nav a.nav-item {
   font-size: 0.9rem;
   margin-top: 0.25rem;
   color: #555;
+  white-space: nowrap;
 }
 
 .nav-dashboard:hover {
